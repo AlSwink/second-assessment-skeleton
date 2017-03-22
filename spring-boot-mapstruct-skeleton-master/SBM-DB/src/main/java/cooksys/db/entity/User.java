@@ -4,32 +4,57 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import cooksys.db.entity.embeddable.Credentials;
 import cooksys.db.entity.embeddable.Profile;
 
 @Entity
+@Table(name = "users")
 public class User {
 	@Id
 	@GeneratedValue
 	private Long id;
 	@NotNull
 	@Column(unique = true)
-	private String username;
+	private String uname;
 
 	private Profile profile;
 
+	@Column(name = "timestamp", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	private Timestamp joined;
-
+	@Embedded
 	private Credentials credentials;
-
+	@OneToMany(mappedBy = "author")
 	private List<Tweet> tweets;
 	
 	private boolean deleted;
+	
+//	Set<User> following;
+//	
+//	Set<User> followers;
+//
+//	public Set<User> getFollowing() {
+//		return following;
+//	}
+//
+//	public void setFollowing(Set<User> following) {
+//		this.following = following;
+//	}
+//
+//	public Set<User> getFollowers() {
+//		return followers;
+//	}
+//
+//	public void setFollowers(Set<User> followers) {
+//		this.followers = followers;
+//	}
 
 	public boolean isDeleted() {
 		return deleted;
@@ -80,12 +105,12 @@ public class User {
 		this.tweets = tweets;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getUname() {
+		return uname;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUname(String username) {
+		this.uname = username;
 	}
 
 	public Profile getProfile() {

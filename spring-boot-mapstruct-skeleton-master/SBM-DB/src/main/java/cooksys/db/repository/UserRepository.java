@@ -6,6 +6,6 @@ import cooksys.db.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long>{
 
-	User findByUsername(String username);
-
+	User findByUname(String username);
+	User findByCredentialsUsername(String username);
 }

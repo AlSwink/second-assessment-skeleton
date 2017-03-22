@@ -36,7 +36,7 @@ public class UserController {
 	public List<UserDto> index() {
 		return userService.index();
 	}
-	
+	//can't have multiple requestbody variables, fix this
 	@PostMapping
 	public UserDto post(@RequestBody Credentials credentials, @RequestBody Profile profile, HttpServletResponse httpResponse){
 		UserDto dto = userService.post(credentials, profile);
@@ -48,12 +48,12 @@ public class UserController {
 	public UserDto getUsername(@PathVariable String username){
 		return userService.get(username);
 	}
-	
+	//can't have multiple requestbody variables, fix this
 	@PatchMapping("@{username}")
 	public UserDto patchUser(@PathVariable String username, @RequestBody Credentials credentials, @RequestBody Profile profile, HttpServletResponse httpResponse){
 		return userService.patch(username, credentials, profile);
 	}
-	
+	//can't have multiple requestbody variables, fix this
 	@DeleteMapping("@{username}")
 	public UserDto deleteUser(@PathVariable String username, @RequestBody Credentials credentials, @RequestBody Profile profile, HttpServletResponse httpResponse){
 		return userService.delete(username, credentials, profile);

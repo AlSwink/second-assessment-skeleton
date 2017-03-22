@@ -33,7 +33,7 @@ public class TweetController {
 	public List<TweetDto> index(){
 		return tweetService.index();
 	}
-	
+	//can't have multiple requestbody variables, fix this
 	@PostMapping
 	public TweetDto post(@RequestBody Credentials credentials, @RequestBody String content, HttpServletResponse httpResponse){
 		TweetDto dto = tweetService.post(credentials, content);
@@ -56,6 +56,7 @@ public class TweetController {
 		tweetService.like(id, credentials);
 	}
 	
+	//can't have multiple requestbody variables, fix this
 	@PostMapping("{id}/reply")
 	public TweetDto reply(@PathVariable int id, @RequestBody Credentials credentials, @RequestBody String content, HttpServletResponse httpResponse){
 		TweetDto dto = tweetService.reply(id, credentials, content);
@@ -80,10 +81,10 @@ public class TweetController {
 		return tweetService.getLikes(id);
 	}
 	
-	@GetMapping("{id}/context")
-	public Context getContext(@PathVariable int id){
-		return tweetService.context(id);
-	}
+//	@GetMapping("{id}/context")
+//	public Context getContext(@PathVariable int id){
+//		return tweetService.context(id);
+//	}
 	
 	@GetMapping("{id}/replies")
 	public List<TweetDto> getReplies(@PathVariable int id){
