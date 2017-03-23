@@ -1,12 +1,14 @@
 package cooksys.dto;
 
+import java.sql.Timestamp;
+
 public class TweetDto {
 
 	private int id;
 	
 	private UserDto author;
 	
-	private Long posted;
+	private Timestamp posted;
 	
 	private String content;
 	
@@ -30,11 +32,11 @@ public class TweetDto {
 		this.author = author;
 	}
 
-	public Long getPosted() {
+	public Timestamp getPosted() {
 		return posted;
 	}
 
-	public void setPosted(Long posted) {
+	public void setPosted(Timestamp posted) {
 		this.posted = posted;
 	}
 

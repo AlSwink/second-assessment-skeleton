@@ -2,12 +2,16 @@ package cooksys.db.entity;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -36,25 +40,30 @@ public class User {
 	
 	private boolean deleted;
 	
-//	Set<User> following;
-//	
-//	Set<User> followers;
-//
-//	public Set<User> getFollowing() {
-//		return following;
-//	}
-//
-//	public void setFollowing(Set<User> following) {
-//		this.following = following;
-//	}
-//
-//	public Set<User> getFollowers() {
-//		return followers;
-//	}
-//
-//	public void setFollowers(Set<User> followers) {
-//		this.followers = followers;
-//	}
+	@JoinTable(name = "follows", joinColumns = {
+			@JoinColumn(name = "followee", referencedColumnName = "id", nullable = false)}, inverseJoinColumns = {
+					 @JoinColumn(name = "follower", referencedColumnName = "id", nullable = false)})
+	@ManyToMany
+	private Set<User> following;
+	
+	@ManyToMany(mappedBy = "following")
+	private Set<User> followers;
+
+	public Set<User> getFollowing() {
+		return following;
+	}
+
+	public void setFollowing(Set<User> following) {
+		this.following = following;
+	}
+
+	public Set<User> getFollowers() {
+		return followers;
+	}
+
+	public void setFollowers(Set<User> followers) {
+		this.followers = followers;
+	}
 
 	public boolean isDeleted() {
 		return deleted;

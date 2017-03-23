@@ -2,10 +2,13 @@ package cooksys.db.entity;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
@@ -14,20 +17,66 @@ import javax.validation.constraints.NotNull;
 public class Tweet {
 	@Id
 	@GeneratedValue
-	private int id;
+	private Integer id;
 	@ManyToOne
 	private User author;
 	@NotNull
+	@Column(name = "timestamp", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	private Timestamp posted;
 	
 	private String content;
 	@ManyToOne
 	private Tweet inReplyTo;
 	
+	@OneToMany(mappedBy = "repostOf")
+	private List<Tweet> reposts;
+	
+	@ManyToOne
 	private Tweet repostOf;
 	
 	@OneToMany(mappedBy = "inReplyTo")
 	private List<Tweet> replies;
+	
+	@ManyToMany(mappedBy = "usedIn")
+	private Set<Hashtag> tagsUsed;
+	
+	public List<Tweet> getReposts() {
+		return reposts;
+	}
+
+	public void setReposts(List<Tweet> reposts) {
+		this.reposts = reposts;
+	}
+
+	public List<Tweet> getReplies() {
+		return replies;
+	}
+
+	public void setReplies(List<Tweet> replies) {
+		this.replies = replies;
+	}
+
+	public Set<Hashtag> getTagsUsed() {
+		return tagsUsed;
+	}
+
+	public void setTagsUsed(Set<Hashtag> tagsUsed) {
+		this.tagsUsed = tagsUsed;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	private boolean deleted;
 
 	public int getId() {
 		return id;
@@ -69,13 +118,13 @@ public class Tweet {
 		this.inReplyTo = inReplyTo;
 	}
 
-//	public Tweet getRepostOf() {
-//		return repostOf;
-//	}
-//
-//	public void setRepostOf(Tweet repostOf) {
-//		this.repostOf = repostOf;
-//	}
+	public Tweet getRepostOf() {
+		return repostOf;
+	}
+
+	public void setRepostOf(Tweet repostOf) {
+		this.repostOf = repostOf;
+	}
 
 	@Override
 	public int hashCode() {

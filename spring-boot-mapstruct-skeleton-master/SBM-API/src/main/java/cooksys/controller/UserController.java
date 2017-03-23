@@ -1,6 +1,7 @@
 package cooksys.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import cooksys.RequestWrapper;
 import cooksys.db.entity.embeddable.Credentials;
 import cooksys.db.entity.embeddable.Profile;
 import cooksys.dto.TweetDto;
@@ -36,11 +38,11 @@ public class UserController {
 	public List<UserDto> index() {
 		return userService.index();
 	}
-	//can't have multiple requestbody variables, fix this
 	@PostMapping
-	public UserDto post(@RequestBody Credentials credentials, @RequestBody Profile profile, HttpServletResponse httpResponse){
-		UserDto dto = userService.post(credentials, profile);
+	public UserDto post(@RequestBody RequestWrapper wrapper, HttpServletResponse httpResponse){
+		UserDto dto = userService.post(wrapper.getCredentials(), wrapper.getProfile());
 		httpResponse.setStatus(HttpServletResponse.SC_CREATED);
+		System.out.println(dto.getUname());
 		return dto;
 	}
 	
@@ -50,13 +52,13 @@ public class UserController {
 	}
 	//can't have multiple requestbody variables, fix this
 	@PatchMapping("@{username}")
-	public UserDto patchUser(@PathVariable String username, @RequestBody Credentials credentials, @RequestBody Profile profile, HttpServletResponse httpResponse){
-		return userService.patch(username, credentials, profile);
+	public UserDto patchUser(@PathVariable String username, @RequestBody RequestWrapper wrapper, HttpServletResponse httpResponse){
+		return userService.patch(username, wrapper.getCredentials(), wrapper.getProfile());
 	}
 	//can't have multiple requestbody variables, fix this
 	@DeleteMapping("@{username}")
-	public UserDto deleteUser(@PathVariable String username, @RequestBody Credentials credentials, @RequestBody Profile profile, HttpServletResponse httpResponse){
-		return userService.delete(username, credentials, profile);
+	public UserDto deleteUser(@PathVariable String username, @RequestBody RequestWrapper wrapper, HttpServletResponse httpResponse){
+		return userService.delete(username, wrapper.getCredentials());
 	}
 	
 	@PostMapping("@{username}/follow")
@@ -85,12 +87,12 @@ public class UserController {
 	}
 	
 	@GetMapping("@{username}/followers")
-	public List<UserDto> getFollowers(@PathVariable String username){
+	public Set<UserDto> getFollowers(@PathVariable String username){
 		return userService.getFollowers(username);
 	}
 	
 	@GetMapping("@{username}/following")
-	public List<UserDto> getFollowing(@PathVariable String username){
+	public Set<UserDto> getFollowing(@PathVariable String username){
 		return userService.getFollowing(username);
 	}
 	

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import cooksys.RequestWrapper;
 import cooksys.db.entity.Hashtag;
 import cooksys.db.entity.embeddable.Credentials;
 import cooksys.dto.TweetDto;
@@ -35,8 +36,8 @@ public class TweetController {
 	}
 	//can't have multiple requestbody variables, fix this
 	@PostMapping
-	public TweetDto post(@RequestBody Credentials credentials, @RequestBody String content, HttpServletResponse httpResponse){
-		TweetDto dto = tweetService.post(credentials, content);
+	public TweetDto post(@RequestBody RequestWrapper wrapper, HttpServletResponse httpResponse){
+		TweetDto dto = tweetService.post(wrapper.getCredentials(), wrapper.getContent());
 		httpResponse.setStatus(HttpServletResponse.SC_CREATED);
 		return dto;
 	}

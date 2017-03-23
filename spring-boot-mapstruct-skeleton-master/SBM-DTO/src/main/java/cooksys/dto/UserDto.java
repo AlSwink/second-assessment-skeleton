@@ -9,20 +9,20 @@ import cooksys.db.entity.embeddable.Profile;
 public class UserDto {
 
 	@NotNull
-	private String username;
+	private String uname;
 	
 	@NotNull
 	private Profile profile;
 	
 	@NotNull
-	private Long joined;
+	private Timestamp joined;
 
-	public String getUsername() {
-		return username;
+	public String getUname() {
+		return uname;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUname(String username) {
+		this.uname = username;
 	}
 
 	public Profile getProfile() {
@@ -33,11 +33,11 @@ public class UserDto {
 		this.profile = profile;
 	}
 
-	public Long getJoined() {
+	public Timestamp getJoined() {
 		return joined;
 	}
 
-	public void setJoined(Long joined) {
+	public void setJoined(Timestamp joined) {
 		this.joined = joined;
 	}
 }
