@@ -40,6 +40,17 @@ public class Tweet {
 	@ManyToMany(mappedBy = "usedIn")
 	private Set<Hashtag> tagsUsed;
 	
+	@ManyToMany(mappedBy = "liked")
+	private List<User> likes;
+	
+	public List<User> getLikes() {
+		return likes;
+	}
+
+	public void setLikes(List<User> likes) {
+		this.likes = likes;
+	}
+
 	public List<Tweet> getReposts() {
 		return reposts;
 	}

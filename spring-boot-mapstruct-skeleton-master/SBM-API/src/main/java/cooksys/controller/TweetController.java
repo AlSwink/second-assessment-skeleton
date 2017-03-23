@@ -1,6 +1,7 @@
 package cooksys.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import cooksys.RequestWrapper;
 import cooksys.db.entity.Hashtag;
 import cooksys.db.entity.embeddable.Credentials;
+import cooksys.dto.HashtagDto;
 import cooksys.dto.TweetDto;
 import cooksys.dto.UserDto;
 import cooksys.service.TweetService;
@@ -59,8 +61,8 @@ public class TweetController {
 	
 	//can't have multiple requestbody variables, fix this
 	@PostMapping("{id}/reply")
-	public TweetDto reply(@PathVariable int id, @RequestBody Credentials credentials, @RequestBody String content, HttpServletResponse httpResponse){
-		TweetDto dto = tweetService.reply(id, credentials, content);
+	public TweetDto reply(@PathVariable int id, @RequestBody RequestWrapper wrapper, HttpServletResponse httpResponse){
+		TweetDto dto = tweetService.reply(id, wrapper.getCredentials(), wrapper.getContent());
 		httpResponse.setStatus(HttpServletResponse.SC_CREATED);
 		return dto;
 	}
@@ -73,7 +75,7 @@ public class TweetController {
 	}
 	
 	@GetMapping("{id}/tags")
-	public List<Hashtag> tags(@PathVariable int id){
+	public Set<HashtagDto> tags(@PathVariable int id){
 		return tweetService.getTags(id);
 	}
 	

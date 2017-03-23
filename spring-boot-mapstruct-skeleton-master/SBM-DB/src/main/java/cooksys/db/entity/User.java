@@ -38,6 +38,9 @@ public class User {
 	@OneToMany(mappedBy = "author")
 	private List<Tweet> tweets;
 	
+	@ManyToMany
+	private List<Tweet> liked;
+	
 	private boolean deleted;
 	
 	@JoinTable(name = "follows", joinColumns = {
@@ -48,6 +51,14 @@ public class User {
 	
 	@ManyToMany(mappedBy = "following")
 	private Set<User> followers;
+
+	public List<Tweet> getLiked() {
+		return liked;
+	}
+
+	public void setLiked(List<Tweet> liked) {
+		this.liked = liked;
+	}
 
 	public Set<User> getFollowing() {
 		return following;
