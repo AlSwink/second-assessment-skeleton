@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import cooksys.Context;
 import cooksys.RequestWrapper;
 import cooksys.db.entity.Hashtag;
 import cooksys.db.entity.embeddable.Credentials;
@@ -84,10 +85,10 @@ public class TweetController {
 		return tweetService.getLikes(id);
 	}
 	
-//	@GetMapping("{id}/context")
-//	public Context getContext(@PathVariable int id){
-//		return tweetService.context(id);
-//	}
+	@GetMapping("{id}/context")
+	public Context getContext(@PathVariable int id){
+		return tweetService.context(id);
+	}
 	
 	@GetMapping("{id}/replies")
 	public List<TweetDto> getReplies(@PathVariable int id){

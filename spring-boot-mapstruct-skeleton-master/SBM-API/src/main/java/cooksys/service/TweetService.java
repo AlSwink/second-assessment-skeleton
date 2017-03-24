@@ -2,11 +2,14 @@ package cooksys.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import cooksys.Context;
+import cooksys.TweetByTimeComparator;
 //import cooksys.controller.Context;
 import cooksys.db.entity.Hashtag;
 import cooksys.db.entity.Tweet;
@@ -139,10 +142,32 @@ public class TweetService {
 				.collect(Collectors.toList());
 	}
 
-	// public Context context(int id) {
-	// // TODO Auto-generated method stub
-	// return null;
-	// }
+	 public Context context(int id) {
+	 // TODO Auto-generated method stub
+		 Context c = new Context();
+		 c.setTarget(tweetMapper.toTweetDto(tweetRepository.findByIdAndDeletedFalse(id)));
+		 boolean top = false;
+		 TweetDto t  = c.getTarget().getInReplyTo();
+		 while(top == false){
+			 if(t != null){
+				 c.getBefore().add(t);
+				 t = t.getInReplyTo();
+			 } else
+				 top = true; 
+		 }
+		 Tweet w = tweetMapper.toTweet(c.getTarget());
+		 if(w.getReplies() != null){
+		 for(Tweet e : w.getReplies()){
+			 c.getAfter().addAll(getReplies(e.getId()));
+			 for(Tweet n : e.getReplies()){
+				 c.getAfter().addAll(getReplies(n.getId()));
+			 }
+		 }
+		 }
+		 Collections.sort(c.getBefore(), new TweetByTimeComparator());
+		 Collections.sort(c.getAfter(), new TweetByTimeComparator());
+		 return c;
+	 }
 	// works
 	public List<TweetDto> getReplies(int id) {
 		List<Tweet> replies = tweetRepository.findByIdAndDeletedFalse(id).getReplies();
@@ -156,13 +181,13 @@ public class TweetService {
 
 	// works
 	public List<TweetDto> getReposts(int id) {
-		List<Tweet> reposts = tweetRepository.findById(id).getReposts();
+		List<Tweet> reposts = tweetRepository.findByIdAndDeletedFalse(id).getReposts();
 		List<TweetDto> repostDto = reposts.stream().map(tweetMapper::toTweetDto).collect(Collectors.toList());
 		return repostDto;
 	}
 
 	public List<UserDto> mentions(int id) {
-		return tweetRepository.findById(id).getMentions().stream().map(userMapper::toUserDto)
+		return tweetRepository.findByIdAndDeletedFalse(id).getMentions().stream().map(userMapper::toUserDto)
 				.collect(Collectors.toList());
 	}
 

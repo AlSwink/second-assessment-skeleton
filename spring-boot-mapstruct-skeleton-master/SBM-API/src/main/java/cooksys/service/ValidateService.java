@@ -14,6 +14,12 @@ public class ValidateService {
 	
 	private TagRepository tagRepository;
 	
+	public ValidateService(UserRepository userRepo, TagRepository tagRepo){
+		super();
+		this.userRepository = userRepo;
+		this.tagRepository = tagRepo;
+	}
+	
 	public boolean tag(String label) {
 		Hashtag check = tagRepository.findByLabel(label);
 		if(check.equals(null))
@@ -24,7 +30,8 @@ public class ValidateService {
 
 	public boolean userExists(String username) {
 		User check = userRepository.findByUname(username);
-		if(check.equals(null) || check.isDeleted()){
+		System.out.println(username);
+		if(check == null || check.isDeleted()){
 			return false;
 		}
 		else 

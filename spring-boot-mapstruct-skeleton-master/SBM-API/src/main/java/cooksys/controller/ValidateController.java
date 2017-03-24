@@ -1,7 +1,7 @@
 package cooksys.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,17 +19,17 @@ public class ValidateController {
 	}
 	
 	@GetMapping("tag/exists/{label}")
-	public boolean tagCheck(@RequestBody String label){
+	public boolean tagCheck(@PathVariable String label){
 		return validateService.tag(label);
 	}
 	
 	@GetMapping("username/exists/@{username}")
-	public boolean exists(@RequestBody String username){
+	public boolean exists(@PathVariable String username){
 		return validateService.userExists(username);
 	}
 	
 	@GetMapping("username/available/@{username}")
-	public boolean available(@RequestBody String username){
+	public boolean available(@PathVariable String username){
 		return validateService.userAvailable(username);
 	}
 }
