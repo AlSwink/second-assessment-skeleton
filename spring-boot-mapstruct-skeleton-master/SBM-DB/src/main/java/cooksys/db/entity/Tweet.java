@@ -20,7 +20,7 @@ public class Tweet {
 	private Integer id;
 	@ManyToOne
 	private User author;
-	@NotNull
+	//@NotNull
 	@Column(name = "timestamp", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	private Timestamp posted;
 	
@@ -36,64 +36,31 @@ public class Tweet {
 	
 	@OneToMany(mappedBy = "inReplyTo")
 	private List<Tweet> replies;
+	@NotNull
+	@ManyToMany
+	private List<Hashtag> tagsUsed;
 	
-	@ManyToMany(mappedBy = "usedIn")
-	private Set<Hashtag> tagsUsed;
+	@ManyToMany
+	private List<User> mentions;
 	
+	public List<User> getMentions() {
+		return mentions;
+	}
+
+	public void setMentions(List<User> mentions) {
+		this.mentions = mentions;
+	}
+
 	@ManyToMany(mappedBy = "liked")
 	private List<User> likes;
 	
-	public List<User> getLikes() {
-		return likes;
-	}
-
-	public void setLikes(List<User> likes) {
-		this.likes = likes;
-	}
-
-	public List<Tweet> getReposts() {
-		return reposts;
-	}
-
-	public void setReposts(List<Tweet> reposts) {
-		this.reposts = reposts;
-	}
-
-	public List<Tweet> getReplies() {
-		return replies;
-	}
-
-	public void setReplies(List<Tweet> replies) {
-		this.replies = replies;
-	}
-
-	public Set<Hashtag> getTagsUsed() {
-		return tagsUsed;
-	}
-
-	public void setTagsUsed(Set<Hashtag> tagsUsed) {
-		this.tagsUsed = tagsUsed;
-	}
-
-	public boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
 	private boolean deleted;
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -129,6 +96,14 @@ public class Tweet {
 		this.inReplyTo = inReplyTo;
 	}
 
+	public List<Tweet> getReposts() {
+		return reposts;
+	}
+
+	public void setReposts(List<Tweet> reposts) {
+		this.reposts = reposts;
+	}
+
 	public Tweet getRepostOf() {
 		return repostOf;
 	}
@@ -137,11 +112,43 @@ public class Tweet {
 		this.repostOf = repostOf;
 	}
 
+	public List<Tweet> getReplies() {
+		return replies;
+	}
+
+	public void setReplies(List<Tweet> replies) {
+		this.replies = replies;
+	}
+
+	public List<Hashtag> getTagsUsed() {
+		return tagsUsed;
+	}
+
+	public void setTagsUsed(List<Hashtag> tagsUsed) {
+		this.tagsUsed = tagsUsed;
+	}
+
+	public List<User> getLikes() {
+		return likes;
+	}
+
+	public void setLikes(List<User> likes) {
+		this.likes = likes;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + id;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -154,9 +161,14 @@ public class Tweet {
 		if (getClass() != obj.getClass())
 			return false;
 		Tweet other = (Tweet) obj;
-		if (id != other.id)
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
+	
+	
 	
 }

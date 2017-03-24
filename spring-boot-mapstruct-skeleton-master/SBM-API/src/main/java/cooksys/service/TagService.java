@@ -18,8 +18,11 @@ public class TagService {
 	private HashtagMapper tagMapper;
 	private TweetMapper tweetMapper;
 	
-	public TagService(){
+	public TagService(TagRepository tagRepository, HashtagMapper hashtagMapper, TweetMapper tweetMapper){
 		super();
+		this.tagRepository = tagRepository;
+		this.tagMapper = hashtagMapper;
+		this.tweetMapper = tweetMapper;
 	}
 
 	public List<TweetDto> taggedTweets(String label) {

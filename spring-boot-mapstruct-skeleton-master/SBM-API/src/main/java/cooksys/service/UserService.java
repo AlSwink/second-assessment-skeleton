@@ -1,5 +1,6 @@
 package cooksys.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -7,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import cooksys.db.entity.Tweet;
 import cooksys.db.entity.User;
 import cooksys.db.entity.embeddable.Credentials;
 import cooksys.db.entity.embeddable.Profile;
@@ -23,10 +25,11 @@ public class UserService {
 	UserMapper userMapper;
 	TweetMapper tweetMapper;
 
-	public UserService(UserRepository userRepo, UserMapper userMap) {
+	public UserService(UserRepository userRepo, UserMapper userMap, TweetMapper tweetMapper) {
 		super();
 		this.userMapper = userMap;
 		this.userRepository = userRepo;
+		this.tweetMapper = tweetMapper;
 	}
 
 	// working
@@ -117,21 +120,39 @@ public class UserService {
 
 	public List<TweetDto> feed(String username) {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<TweetDto> tweets(String username) {
-		return userRepository
+		List<TweetDto> self = userRepository
 				.findByUname(username)
 				.getTweets()
 				.stream()
 				.map(tweetMapper::toTweetDto)
-				.collect(Collectors.toList());	
+				.collect(Collectors.toList());
+		for(User u : userRepository.findByUname(username).getFollowing()){
+			self.addAll(
+					u.getTweets().stream().map(tweetMapper::toTweetDto).collect(Collectors.toList())
+					);			
+		}
+				
+		return self;
+	}
+
+	public List<TweetDto> tweets(String username) {
+		List<Tweet> convert = userRepository.findByUname(username).getTweets();
+		
+		List<TweetDto> dto = new ArrayList<>();
+		for(Tweet t : convert){
+			if(t.isDeleted() == false)
+				dto.add(tweetMapper.toTweetDto(t));
+			
+		}
+		return dto;
 	}
 
 	public List<TweetDto> mentions(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		return userRepository.findByUname(username)
+				.getMentioned()
+				.stream()
+				.map(tweetMapper::toTweetDto)
+				.collect(Collectors.toList());
 	}
 
 	public boolean credentialCheck(String username, Credentials credentials) {

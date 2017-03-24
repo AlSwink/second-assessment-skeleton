@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 public class TweetDto {
 
-	private int id;
+	private Integer id;
 	
 	private UserDto author;
 	
@@ -16,11 +16,11 @@ public class TweetDto {
 	
 	private TweetDto repostOf;
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

@@ -10,6 +10,7 @@ import cooksys.db.entity.User;
 public interface TweetRepository extends JpaRepository<Tweet, Integer>{
 	
 	Tweet findById(Integer id);
+	Tweet findByIdAndDeletedFalse(Integer id);
 	Tweet findByRepostOf(Tweet tweet);
 	Tweet findByAuthor(User user);
 	List<Tweet> findByDeletedFalse();

@@ -51,6 +51,17 @@ public class User {
 	
 	@ManyToMany(mappedBy = "following")
 	private Set<User> followers;
+	
+	@ManyToMany(mappedBy = "mentions")
+	private List<Tweet> mentioned;
+
+	public List<Tweet> getMentioned() {
+		return mentioned;
+	}
+
+	public void setMentioned(List<Tweet> mentioned) {
+		this.mentioned = mentioned;
+	}
 
 	public List<Tweet> getLiked() {
 		return liked;

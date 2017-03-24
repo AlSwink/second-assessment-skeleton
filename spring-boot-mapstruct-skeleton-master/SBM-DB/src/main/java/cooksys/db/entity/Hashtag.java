@@ -24,7 +24,7 @@ public class Hashtag {
 	
 	private Timestamp lastUsed;
 	
-	@ManyToMany
+	@ManyToMany(mappedBy = "tagsUsed")
 	private List<Tweet> usedIn;
 	
 	public Integer getId() {

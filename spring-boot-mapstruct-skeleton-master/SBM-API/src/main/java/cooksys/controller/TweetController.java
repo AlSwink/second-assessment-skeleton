@@ -39,7 +39,7 @@ public class TweetController {
 	//can't have multiple requestbody variables, fix this
 	@PostMapping
 	public TweetDto post(@RequestBody RequestWrapper wrapper, HttpServletResponse httpResponse){
-		TweetDto dto = tweetService.post(wrapper.getCredentials(), wrapper.getContent());
+		TweetDto dto = tweetService.post(wrapper.getCredentials().getUsername(), wrapper.getContent());
 		httpResponse.setStatus(HttpServletResponse.SC_CREATED);
 		return dto;
 	}
@@ -75,7 +75,7 @@ public class TweetController {
 	}
 	
 	@GetMapping("{id}/tags")
-	public Set<HashtagDto> tags(@PathVariable int id){
+	public List<HashtagDto> tags(@PathVariable int id){
 		return tweetService.getTags(id);
 	}
 	
@@ -100,7 +100,7 @@ public class TweetController {
 	}
 	
 	@GetMapping("{id}/mentions")
-	public List<TweetDto> getMentions(@PathVariable int id){
+	public List<UserDto> getMentions(@PathVariable int id){
 		return tweetService.mentions(id);
 	}
 	
