@@ -1,5 +1,6 @@
 package cooksys;
 
+//comparator for tweetdtos, sort of works, not sure I did it right
 import java.util.Comparator;
 
 import cooksys.db.entity.Tweet;

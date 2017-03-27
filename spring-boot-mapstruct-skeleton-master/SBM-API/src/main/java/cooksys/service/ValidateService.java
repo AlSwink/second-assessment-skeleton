@@ -6,7 +6,7 @@ import cooksys.db.entity.Hashtag;
 import cooksys.db.entity.User;
 import cooksys.db.repository.TagRepository;
 import cooksys.db.repository.UserRepository;
-
+//service for dealing with validate requests
 @Service
 public class ValidateService {
 

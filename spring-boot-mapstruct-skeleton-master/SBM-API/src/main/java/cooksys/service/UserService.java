@@ -38,23 +38,24 @@ public class UserService {
 		this.tweetRepository = tweetRepository;
 	}
 
-	// working
+	// searches database for all users that have not been deleted using derived query defined in UserRepository
 	public List<UserDto> index() {
 		return userRepository.findByDeletedFalse().stream().map(userMapper::toUserDto).collect(Collectors.toList());
 	}
 
-	// working
 	public UserDto post(Credentials credentials, Profile profile) {
-		// find a better way to do this
+		
 		User u = userRepository.findByCredentialsUsername(credentials.getUsername());
+		//if user is new, creates and saves it to database
 		if (u == null) {
 			u = new User();
 			u.setUname(credentials.getUsername());
 			u.setCredentials(credentials);
 			u.setProfile(profile);
 			userRepository.save(u);
-			
-		} else if (u.isDeleted() == true) {
+		
+		}  //or if user has been previously deleted, reactivates it
+		else if (u.isDeleted() == true) {
 			u.setDeleted(false);
 			userRepository.save(u);
 			
@@ -62,12 +63,11 @@ public class UserService {
 		return userMapper.toUserDto(u);
 	}
 
-	// working
 	public UserDto get(String username) {
 		return userMapper.toUserDto(userRepository.findByUname(username));
 	}
 
-	// working
+	// deletes user, then runs through all user's tweets sets them to deleted
 	public UserDto delete(String username, Credentials credentials) {
 		if (credentialCheck(username, credentials)) {
 			User deleted = userRepository.findByUname(username);
@@ -83,7 +83,7 @@ public class UserService {
 			return null;
 	}
 
-	// working
+	// adds follower and followee relationship
 	public void follow(String username, Credentials credentials) {
 		if (credentialCheck(credentials.getUsername(), credentials)) {
 			User follower = userRepository.findByCredentialsUsername(credentials.getUsername());
@@ -95,7 +95,7 @@ public class UserService {
 		}
 	}
 
-	// working
+	// gets rid of relationship made in previous 
 	public void unfollow(String username, Credentials credentials) {
 		if (credentialCheck(credentials.getUsername(), credentials)) {
 			User follower = userRepository.findByCredentialsUsername(credentials.getUsername());
@@ -138,12 +138,13 @@ public class UserService {
 	}
 
 	public List<TweetDto> feed(String username) {
-		// TODO Auto-generated method stub
+		// fetches tweets by user
 		List<TweetDto> self = new ArrayList<>();
 		for (Tweet t : userRepository.findByUname(username).getTweets()) {
 			if (t.isDeleted() == false)
 				self.add(tweetMapper.toTweetDto(t));
 		}
+		//fetches tweets by people the user is following
 		for (User u : userRepository.findByUname(username).getFollowing()) {
 			for (Tweet t : u.getTweets()) {
 				if (t.isDeleted() == false)
@@ -181,6 +182,7 @@ public class UserService {
 
 	}
 
+	//reusable method to check credentials against the user
 	public boolean credentialCheck(String username, Credentials credentials) {
 		if (userRepository.findByCredentialsUsername(username).getCredentials().equals(credentials))
 			return true;

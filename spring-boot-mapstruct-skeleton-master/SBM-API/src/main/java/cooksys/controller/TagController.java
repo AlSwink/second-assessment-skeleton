@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import cooksys.dto.HashtagDto;
 import cooksys.dto.TweetDto;
 import cooksys.service.TagService;
-
+//controller for the tag class
 @RestController
 @RequestMapping("tags")
 public class TagController {

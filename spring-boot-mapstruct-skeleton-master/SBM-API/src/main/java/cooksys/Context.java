@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cooksys.dto.TweetDto;
-
+/***
+ * context class
+ * holds target TweetDto and lists of before and after
+ * pojo
+ */
 public class Context {
 
 	private TweetDto target;

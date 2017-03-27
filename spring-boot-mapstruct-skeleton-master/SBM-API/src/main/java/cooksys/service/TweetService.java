@@ -143,7 +143,7 @@ public class TweetService {
 	}
 
 	 public Context context(int id) {
-	 // TODO Auto-generated method stub
+	 // This bit works
 		 Context c = new Context();
 		 c.setTarget(tweetMapper.toTweetDto(tweetRepository.findByIdAndDeletedFalse(id)));
 		 boolean top = false;
@@ -156,6 +156,7 @@ public class TweetService {
 				 top = true; 
 		 }
 		 Tweet w = tweetMapper.toTweet(c.getTarget());
+		 //this bit doesn't
 		 if(w.getReplies() != null){
 		 for(Tweet e : w.getReplies()){
 			 c.getAfter().addAll(getReplies(e.getId()));
@@ -190,14 +191,16 @@ public class TweetService {
 		return tweetRepository.findByIdAndDeletedFalse(id).getMentions().stream().map(userMapper::toUserDto)
 				.collect(Collectors.toList());
 	}
-
+	//same as method from userservice
 	public boolean credentialCheck(int id, Credentials credentials) {
 		if (tweetRepository.findById(id).getAuthor().getCredentials().equals(credentials))
 			return true;
 		else
 			return false;
 	}
-
+	//method to identify hashtags in content
+	//inclusively splits on #, then searches for strings that begin with #
+	//creates relationship between tags and tweet
 	public List<Hashtag> tagSearch(String content) {
 		List<Hashtag> tags = new ArrayList<>();
 		for (String retval : content.split("(?=#)")) {
@@ -219,7 +222,7 @@ public class TweetService {
 		}
 		return tags;
 	}
-
+//same but for mentions
 	public List<User> mentionSearch(String content) {
 		List<User> mentions = new ArrayList<>();
 		for (String retval : content.split("(?=@)")) {

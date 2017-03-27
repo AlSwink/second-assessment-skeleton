@@ -2,7 +2,8 @@ package cooksys;
 
 import cooksys.db.entity.embeddable.Credentials;
 import cooksys.db.entity.embeddable.Profile;
-
+//holds profile, content, and credentials
+//made to solve problem of only one thing in request body
 public class RequestWrapper {
 
 	Credentials credentials;

@@ -37,7 +37,6 @@ public class TweetController {
 	public List<TweetDto> index(){
 		return tweetService.index();
 	}
-	//can't have multiple requestbody variables, fix this
 	@PostMapping
 	public TweetDto post(@RequestBody RequestWrapper wrapper, HttpServletResponse httpResponse){
 		TweetDto dto = tweetService.post(wrapper.getCredentials().getUsername(), wrapper.getContent());
@@ -60,7 +59,6 @@ public class TweetController {
 		tweetService.like(id, credentials);
 	}
 	
-	//can't have multiple requestbody variables, fix this
 	@PostMapping("{id}/reply")
 	public TweetDto reply(@PathVariable int id, @RequestBody RequestWrapper wrapper, HttpServletResponse httpResponse){
 		TweetDto dto = tweetService.reply(id, wrapper.getCredentials(), wrapper.getContent());
