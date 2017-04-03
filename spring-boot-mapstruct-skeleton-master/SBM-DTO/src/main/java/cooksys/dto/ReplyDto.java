@@ -2,7 +2,7 @@ package cooksys.dto;
 
 import java.sql.Timestamp;
 
-public class TweetDto {
+public class ReplyDto extends TweetDto {
 
 	private Integer id;
 	
@@ -10,7 +10,9 @@ public class TweetDto {
 	
 	private Timestamp posted;
 	
+	private String content;
 	
+	private ReplyDto inReplyTo;
 	
 	public Integer getId() {
 		return id;
@@ -36,5 +38,20 @@ public class TweetDto {
 		this.posted = posted;
 	}
 
-	
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public ReplyDto getInReplyTo() {
+		return inReplyTo;
+	}
+
+	public void setInReplyTo(ReplyDto inReplyTo) {
+		this.inReplyTo = inReplyTo;
+	}
+
 }

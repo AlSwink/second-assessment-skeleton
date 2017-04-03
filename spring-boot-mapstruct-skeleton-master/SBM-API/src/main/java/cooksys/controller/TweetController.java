@@ -1,7 +1,6 @@
 package cooksys.controller;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,9 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cooksys.Context;
 import cooksys.RequestWrapper;
-import cooksys.db.entity.Hashtag;
 import cooksys.db.entity.embeddable.Credentials;
 import cooksys.dto.HashtagDto;
+import cooksys.dto.ReplyDto;
+import cooksys.dto.RepostDto;
 import cooksys.dto.TweetDto;
 import cooksys.dto.UserDto;
 import cooksys.service.TweetService;
@@ -60,15 +60,15 @@ public class TweetController {
 	}
 	
 	@PostMapping("{id}/reply")
-	public TweetDto reply(@PathVariable int id, @RequestBody RequestWrapper wrapper, HttpServletResponse httpResponse){
-		TweetDto dto = tweetService.reply(id, wrapper.getCredentials(), wrapper.getContent());
+	public ReplyDto reply(@PathVariable int id, @RequestBody RequestWrapper wrapper, HttpServletResponse httpResponse){
+		ReplyDto dto = tweetService.reply(id, wrapper.getCredentials(), wrapper.getContent());
 		httpResponse.setStatus(HttpServletResponse.SC_CREATED);
 		return dto;
 	}
 	
 	@PostMapping("{id}/repost")
-	public TweetDto repost(@PathVariable int id, @RequestBody Credentials credentials, HttpServletResponse httpResponse){
-		TweetDto dto = tweetService.repost(id, credentials);
+	public RepostDto repost(@PathVariable int id, @RequestBody Credentials credentials, HttpServletResponse httpResponse){
+		RepostDto dto = tweetService.repost(id, credentials);
 		httpResponse.setStatus(HttpServletResponse.SC_CREATED);
 		return dto;
 	}
@@ -89,12 +89,12 @@ public class TweetController {
 	}
 	
 	@GetMapping("{id}/replies")
-	public List<TweetDto> getReplies(@PathVariable int id){
+	public List<ReplyDto> getReplies(@PathVariable int id){
 		return tweetService.getReplies(id);
 	}
 	
 	@GetMapping("{id}/reposts")
-	public List<TweetDto> getReposts(@PathVariable int id){
+	public List<RepostDto> getReposts(@PathVariable int id){
 		return tweetService.getReposts(id);
 	}
 	

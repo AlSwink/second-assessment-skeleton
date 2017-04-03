@@ -22,7 +22,7 @@ public class ValidateService {
 	
 	public boolean tag(String label) {
 		Hashtag check = tagRepository.findByLabel(label);
-		if(check.equals(null))
+		if(check == null)
 			return false;
 		else
 			return true;
@@ -40,7 +40,7 @@ public class ValidateService {
 
 	public boolean userAvailable(String username) {
 		User check = userRepository.findByUname(username);
-		if(check.equals(null))
+		if(check == null)
 			return true;
 		else 
 			return false;

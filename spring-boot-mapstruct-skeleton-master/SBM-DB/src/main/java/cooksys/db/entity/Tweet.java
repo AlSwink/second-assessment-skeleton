@@ -24,6 +24,8 @@ public class Tweet {
 	@Column(name = "timestamp", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	private Timestamp posted;
 	
+	private String type;
+	
 	private String content;
 	@ManyToOne
 	private Tweet inReplyTo;
@@ -36,12 +38,20 @@ public class Tweet {
 	
 	@OneToMany(mappedBy = "inReplyTo")
 	private List<Tweet> replies;
-	@NotNull
+	
 	@ManyToMany
 	private List<Hashtag> tagsUsed;
 	
 	@ManyToMany
 	private List<User> mentions;
+	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 	
 	public List<User> getMentions() {
 		return mentions;

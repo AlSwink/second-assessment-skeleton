@@ -137,18 +137,42 @@ public class UserService {
 		return dtoSet;
 	}
 
+	//check for types
 	public List<TweetDto> feed(String username) {
 		// fetches tweets by user
 		List<TweetDto> self = new ArrayList<>();
-		for (Tweet t : userRepository.findByUname(username).getTweets()) {
-			if (t.isDeleted() == false)
-				self.add(tweetMapper.toTweetDto(t));
+		for (Tweet tweet : userRepository.findByUname(username).getTweets()) {
+			if (tweet.isDeleted() == false){
+				switch (tweet.getType()) {
+				case "simple":
+					self.add(tweetMapper.toSimpleDto(tweet));
+					break;
+				case "reply":
+					self.add(tweetMapper.toReplyDto(tweet));
+					break;
+				case "repost":
+					self.add(tweetMapper.toRepostDto(tweet));
+					break;
+				}
+			}
 		}
 		//fetches tweets by people the user is following
 		for (User u : userRepository.findByUname(username).getFollowing()) {
-			for (Tweet t : u.getTweets()) {
-				if (t.isDeleted() == false)
-					self.add(tweetMapper.toTweetDto(t));
+			for (Tweet tweet : u.getTweets()) {
+				if (tweet.isDeleted() == false)
+					if (tweet.isDeleted() == false){
+						switch (tweet.getType()) {
+						case "simple":
+							self.add(tweetMapper.toSimpleDto(tweet));
+							break;
+						case "reply":
+							self.add(tweetMapper.toReplyDto(tweet));
+							break;
+						case "repost":
+							self.add(tweetMapper.toRepostDto(tweet));
+							break;
+						}
+					}
 			}
 		}
 		Collections.sort(self, new TweetByTimeComparator());
@@ -159,10 +183,18 @@ public class UserService {
 		List<Tweet> convert = userRepository.findByUname(username).getTweets();
 
 		List<TweetDto> dto = new ArrayList<>();
-		for (Tweet t : convert) {
-			if (t.isDeleted() == false)
-				dto.add(tweetMapper.toTweetDto(t));
-
+		for(Tweet check : convert){
+			switch (check.getType()) {
+			case "simple":
+				dto.add(tweetMapper.toSimpleDto(check));
+				break;
+			case "reply":
+				dto.add(tweetMapper.toReplyDto(check));
+				break;
+			case "repost":
+				dto.add(tweetMapper.toRepostDto(check));
+				break;
+			}
 		}
 		Collections.sort(dto, new TweetByTimeComparator());
 		return dto;
@@ -172,10 +204,18 @@ public class UserService {
 		List<Tweet> convert = userRepository.findByUname(username).getMentioned();
 
 		List<TweetDto> dto = new ArrayList<>();
-		for (Tweet t : convert) {
-			if (t.isDeleted() == false)
-				dto.add(tweetMapper.toTweetDto(t));
-
+		for(Tweet check : convert){
+			switch (check.getType()) {
+			case "simple":
+				dto.add(tweetMapper.toSimpleDto(check));
+				break;
+			case "reply":
+				dto.add(tweetMapper.toReplyDto(check));
+				break;
+			case "repost":
+				dto.add(tweetMapper.toRepostDto(check));
+				break;
+			}
 		}
 		Collections.sort(dto,new TweetByTimeComparator());
 		return dto;

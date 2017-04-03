@@ -19,6 +19,9 @@ import cooksys.db.repository.TagRepository;
 import cooksys.db.repository.TweetRepository;
 import cooksys.db.repository.UserRepository;
 import cooksys.dto.HashtagDto;
+import cooksys.dto.ReplyDto;
+import cooksys.dto.RepostDto;
+import cooksys.dto.SimpleDto;
 import cooksys.dto.TweetDto;
 import cooksys.dto.UserDto;
 import cooksys.mapper.HashtagMapper;
@@ -48,31 +51,54 @@ public class TweetService {
 
 	// works
 	public List<TweetDto> index() {
-		return tweetRepository.findByDeletedFalse().stream().map(tweetMapper::toTweetDto).collect(Collectors.toList());
+		List<Tweet> notDeleted = tweetRepository.findByDeletedFalse();
+		List<TweetDto> index = new ArrayList<>();
+		for(Tweet check : notDeleted){
+			switch (check.getType()) {
+			case "simple":
+				index.add(tweetMapper.toSimpleDto(check));
+				break;
+			case "reply":
+				index.add(tweetMapper.toReplyDto(check));
+				break;
+			case "repost":
+				index.add(tweetMapper.toRepostDto(check));
+				break;
+			}
+		}
+		return index;
 	}
 
 	// works
-	public TweetDto post(String username, String content) {
+	public SimpleDto post(String username, String content) {
 
 		Tweet posted = new Tweet();
-		User author = userRepository.findByUname(username);
-		posted.setAuthor(author);
-		posted.setContent(content);
-		posted.setTagsUsed(tagSearch(content));
-		posted.setMentions(mentionSearch(content));
-		author.getTweets().add(posted);
-		userRepository.saveAndFlush(author);
-		tweetRepository.saveAndFlush(posted);
+		
 
-		return tweetMapper.toTweetDto(posted);
+		createTweet(posted, username, "simple", content);
+		
+		return tweetMapper.toSimpleDto(posted);
 	}
 
-	// works
+	// change to check type
 	public TweetDto get(int id) {
-		return tweetMapper.toTweetDto(tweetRepository.findByIdAndDeletedFalse(id));
+		Tweet gotten = tweetRepository.findByIdAndDeletedFalse(id);
+		TweetDto dto = new TweetDto();
+		switch (gotten.getType()) {
+		case "simple":
+			dto = tweetMapper.toSimpleDto(gotten);
+			break;
+		case "reply":
+			dto = tweetMapper.toReplyDto(gotten);
+			break;
+		case "repost":
+			dto = tweetMapper.toRepostDto(gotten);
+			break;
+		}
+		return dto;
 	}
 
-	// works
+	// change to check type
 	public TweetDto delete(int id, Credentials credentials) {
 		if (credentialCheck(id, credentials)) {
 			Tweet deleted = tweetRepository.findById(id);
@@ -96,36 +122,26 @@ public class TweetService {
 	}
 
 	// works
-	public TweetDto reply(int id, Credentials credentials, String content) {
+	public ReplyDto reply(int id, Credentials credentials, String content) {
 		Tweet reply = new Tweet();
 		Tweet repliedTo = tweetRepository.findByIdAndDeletedFalse(id);
-		User author = userRepository.findByCredentialsUsername(credentials.getUsername());
-		reply.setAuthor(author);
-		reply.setContent(content);
-		reply.setTagsUsed(tagSearch(content));
 		reply.setInReplyTo(tweetRepository.findById(id));
+		createTweet(reply,credentials.getUsername(), "reply", content);
 		repliedTo.getReplies().add(reply);
-		author.getTweets().add(reply);
-		userRepository.save(author);
-		tweetRepository.save(reply);
 		tweetRepository.save(repliedTo);
 
-		return tweetMapper.toTweetDto(reply);
+		return tweetMapper.toReplyDto(reply);
 	}
 
 	// works
-	public TweetDto repost(int id, Credentials credentials) {
+	public RepostDto repost(int id, Credentials credentials) {
 		Tweet repost = new Tweet();
 		Tweet reposted = tweetRepository.findByIdAndDeletedFalse(id);
-		User author = userRepository.findByCredentialsUsername(credentials.getUsername());
-		repost.setAuthor(author);
 		repost.setRepostOf(reposted);
 		reposted.getReposts().add(repost);
-		author.getTweets().add(repost);
-		userRepository.save(author);
-		tweetRepository.save(repost);
+		createTweet(repost, credentials.getUsername(), "repost", "");
 		tweetRepository.save(reposted);
-		return tweetMapper.toTweetDto(repost);
+		return tweetMapper.toRepostDto(repost);
 	}
 
 	public List<HashtagDto> getTags(int id) {
@@ -142,48 +158,59 @@ public class TweetService {
 				.collect(Collectors.toList());
 	}
 
+	//get working, check for types
 	 public Context context(int id) {
 	 // This bit works
-		 Context c = new Context();
-		 c.setTarget(tweetMapper.toTweetDto(tweetRepository.findByIdAndDeletedFalse(id)));
+		 Context context = new Context();
+		 Tweet target = tweetRepository.findByIdAndDeletedFalse(id);
+		 switch (target.getType()) {
+			case "simple":
+				context.setTarget(tweetMapper.toSimpleDto(target));
+				break;
+			case "reply":
+				context.setTarget(tweetMapper.toReplyDto(target));
+				break;
+			case "repost":
+				context.setTarget(tweetMapper.toRepostDto(target));
+				break;
+			}
 		 boolean top = false;
-		 TweetDto t  = c.getTarget().getInReplyTo();
+		 Tweet upward  = target.getInReplyTo();
 		 while(top == false){
-			 if(t != null){
-				 c.getBefore().add(t);
-				 t = t.getInReplyTo();
+			 if(upward != null){
+				 context.getBefore().add(tweetMapper.toReplyDto(upward));
+				 upward = upward.getInReplyTo();
 			 } else
 				 top = true; 
 		 }
-		 Tweet w = tweetMapper.toTweet(c.getTarget());
-		 //this bit doesn't
-		 if(w.getReplies() != null){
-		 for(Tweet e : w.getReplies()){
-			 c.getAfter().addAll(getReplies(e.getId()));
-			 for(Tweet n : e.getReplies()){
-				 c.getAfter().addAll(getReplies(n.getId()));
-			 }
-		 }
-		 }
-		 Collections.sort(c.getBefore(), new TweetByTimeComparator());
-		 Collections.sort(c.getAfter(), new TweetByTimeComparator());
-		 return c;
+//		 //this bit doesn't
+//		 if(target.getReplies() != null){
+//		 for(Tweet downward : target.getReplies()){
+//			 c.getAfter().addAll(getReplies(e.getId()));
+//			 for(Tweet n : e.getReplies()){
+//				 c.getAfter().addAll(getReplies(n.getId()));
+//			 }
+//		 }
+//		 }
+		 Collections.sort(context.getBefore(), new TweetByTimeComparator());
+//		 Collections.sort(c.getAfter(), new TweetByTimeComparator());
+		 return context;
 	 }
 	// works
-	public List<TweetDto> getReplies(int id) {
+	public List<ReplyDto> getReplies(int id) {
 		List<Tweet> replies = tweetRepository.findByIdAndDeletedFalse(id).getReplies();
 		if (replies.isEmpty())
 			return null;
 		else {
-			List<TweetDto> replyDto = replies.stream().map(tweetMapper::toTweetDto).collect(Collectors.toList());
+			List<ReplyDto> replyDto = replies.stream().map(tweetMapper::toReplyDto).collect(Collectors.toList());
 			return replyDto;
 		}
 	}
 
 	// works
-	public List<TweetDto> getReposts(int id) {
+	public List<RepostDto> getReposts(int id) {
 		List<Tweet> reposts = tweetRepository.findByIdAndDeletedFalse(id).getReposts();
-		List<TweetDto> repostDto = reposts.stream().map(tweetMapper::toTweetDto).collect(Collectors.toList());
+		List<RepostDto> repostDto = reposts.stream().map(tweetMapper::toRepostDto).collect(Collectors.toList());
 		return repostDto;
 	}
 
@@ -235,4 +262,21 @@ public class TweetService {
 		}
 		return mentions;
 	}
+	
+	public void createTweet(Tweet posted, String username, String type, String content) {
+		User author = userRepository.findByUname(username);
+		posted.setAuthor(author);
+		posted.setType(type);
+		if(type == "simple" || type == "reply"){
+			posted.setContent(content);
+			posted.setTagsUsed(tagSearch(content));
+			posted.setMentions(mentionSearch(content));
+		}
+		author.getTweets().add(posted);
+		userRepository.saveAndFlush(author);
+		tweetRepository.saveAndFlush(posted);
+		
+	}
+
+	
 }
