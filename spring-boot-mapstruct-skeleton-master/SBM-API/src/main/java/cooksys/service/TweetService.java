@@ -178,22 +178,20 @@ public class TweetService {
 		 Tweet upward  = target.getInReplyTo();
 		 while(top == false){
 			 if(upward != null){
-				 context.getBefore().add(tweetMapper.toReplyDto(upward));
+				 if(upward.getType() == "reply"){
+					 context.getBefore().add(tweetMapper.toReplyDto(upward));
+				 } else {
+					 context.getBefore().add(tweetMapper.toSimpleDto(upward));
+				 }
 				 upward = upward.getInReplyTo();
 			 } else
 				 top = true; 
 		 }
-//		 //this bit doesn't
-//		 if(target.getReplies() != null){
-//		 for(Tweet downward : target.getReplies()){
-//			 c.getAfter().addAll(getReplies(e.getId()));
-//			 for(Tweet n : e.getReplies()){
-//				 c.getAfter().addAll(getReplies(n.getId()));
-//			 }
-//		 }
-//		 }
+
+		 traverseTweets(target, context);
+		 
 		 Collections.sort(context.getBefore(), new TweetByTimeComparator());
-//		 Collections.sort(c.getAfter(), new TweetByTimeComparator());
+		 Collections.sort(context.getAfter(), new TweetByTimeComparator());
 		 return context;
 	 }
 	// works
@@ -278,5 +276,17 @@ public class TweetService {
 		
 	}
 
+	public void traverseTweets(Tweet tweet, Context context){
+		int replyCount = tweet.getReplies().size();
+		if(replyCount == 0){
+			
+		} else {
+			for(int i = 0; i < replyCount; i++){
+				Tweet reply = tweet.getReplies().get(i);
+				context.getAfter().add(tweetMapper.toReplyDto(reply));
+				traverseTweets(reply, context);
+			}
+		}
+	}
 	
 }
