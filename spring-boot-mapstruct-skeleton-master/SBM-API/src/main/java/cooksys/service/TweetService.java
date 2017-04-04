@@ -66,6 +66,7 @@ public class TweetService {
 				break;
 			}
 		}
+		Collections.reverse(index);
 		return index;
 	}
 

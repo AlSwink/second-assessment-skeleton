@@ -176,6 +176,7 @@ public class UserService {
 			}
 		}
 		Collections.sort(self, new TweetByTimeComparator());
+		Collections.reverse(self);
 		return self;
 	}
 
@@ -197,6 +198,7 @@ public class UserService {
 			}
 		}
 		Collections.sort(dto, new TweetByTimeComparator());
+		Collections.reverse(dto);
 		return dto;
 	}
 
